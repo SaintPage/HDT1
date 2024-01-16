@@ -1,5 +1,10 @@
 import java.util.Scanner;
-
+/**
+ * Programa para utilizar una radio
+ * 
+ * @author SaintPage Ultimate-Truth-Seeker
+ * @version 16 - 1 -2024
+ */
 public class Main {
     public static void main(String[] args) {
         // Crear una instancia de la clase Radio
@@ -27,7 +32,11 @@ public class Main {
             // Ejecutar la opción seleccionada
             switch (choice) {
                 case 1:
-                    myRadio.switchOnOff();
+                    if (!myRadio.isON()) {// condicional para evitar redundar, se repite en la opción seis
+                        myRadio.switchOnOff();
+                    } else {
+                        System.out.println("La radio está encendida");
+                    }
                     break;
                 case 2:
                     myRadio.switchAMFM();
@@ -42,9 +51,16 @@ public class Main {
                     selectStation(myRadio, scanner);
                     break;
                 case 6:
-                    myRadio.switchOnOff();
+                    if (myRadio.isON()) {
+                        myRadio.switchOnOff();
+                    } else {
+                        System.out.println("La radio está apagada");
+                    }
                     break;
                 case 0:
+                    if (myRadio.isON()) {// apaga la radio antes de cerrar el programa
+                        myRadio.switchOnOff();
+                    }
                     System.out.println("Saliendo del programa...");
                     break;
                 default:
@@ -57,18 +73,36 @@ public class Main {
         // Cerrar el scanner al finalizar
         scanner.close();
     }
-
+    /**
+     * Método para la interfaz de interacción con el usuario al guardar una estación
+     * Se hace de esta manera para procurar que los métodos de la clase trabajan solo de manera interna
+     * @param radio la radio que se está usando
+     * @param scanner objeto de entrada del usuario
+     */
     private static void saveStation(IRadio radio, Scanner scanner) {
+        if (!radio.isON()) {
+            System.out.println("Encienda primero la radio");
+            return;
+        }
         System.out.print("Ingresa un número del 1-12: ");
         int buttonId = scanner.nextInt();
 
         System.out.print("Ingresa la emisora a guardar: ");
         double station = scanner.nextDouble();
-
+        // se invoca el método dentro de la clase radio
         radio.saveStation(buttonId, station);
     }
-
+    /**
+     * Método de interacción con el usuario para seleccionar una estación
+     * Se hace de esta manera para procurar que los métodos de la clase trabajan solo de manera interna
+     * @param radio la radio que se está usando
+     * @param scanner objeto para la entrada del usuario 
+     */
     private static void selectStation(IRadio radio, Scanner scanner) {
+        if (!radio.isON()) {
+            System.out.println("Encienda primero la radio");
+            return;
+        }
         System.out.print("Ingresa el número de botón que hayas guardado (1-12): ");
         int buttonId = scanner.nextInt();
 

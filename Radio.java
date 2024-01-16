@@ -1,10 +1,17 @@
+/**
+ * Clase para implementar una radio. Se puede sustituir por otra clase funcional
+ * @author SaintPage Ultimate-Truth-Seeker
+ * @version 16 - 01 - 2024
+ */
 public class Radio implements IRadio {
     private boolean isOn;
     private boolean isAM;
     private double currentStation;
     private int currentButton;
     private double[] savedStations;
-
+    /*
+     * constructor
+     */
     public Radio() {
         isOn = false;
         // Comienza en AM por defecto
@@ -15,6 +22,8 @@ public class Radio implements IRadio {
         currentStation = isAM ? 530.0 : 87.9; 
     }
     
+    // Javadoc de los métodos override en la interfaz
+
     @Override
     public boolean isAM() {
         return isAM;
@@ -37,23 +46,31 @@ public class Radio implements IRadio {
 
     @Override
     public void switchAMFM() {
-        if (isAM) {
+        if (!isON()) {
+            System.out.println("Encienda primero la radio");
+            return;
+        }
+        if (isAM() == false) {
             // Limitar la frecuencia AM antes de cambiar a FM
             currentStation = Math.max(currentStation, 530.0);
             currentStation = Math.min(currentStation, 1610.0);
-            isAM = false;
-            System.out.println("Cambiando a FM.");
-        } else {
-            // Limitar la frecuencia FM antes de cambiar a AM
-            currentStation = Math.max(currentStation, 87.9);
-            currentStation = Math.min(currentStation, 107.9);
             isAM = true;
             System.out.println("Cambiando a AM.");
+        } else {
+            // Limitar la frecuencia FM antes de cambiar a AM
+            currentStation = Math.min(currentStation, 87.9);
+            currentStation = Math.min(currentStation, 107.9);
+            isAM = false;
+            System.out.println("Cambiando a FM.");
         }
     }
 
     @Override
     public double nextStation() {
+        if (!isON()) {
+            System.out.println("Encienda primero la radio");
+            return currentStation;
+        }
         if (isAM) {
             // Incrementar en 10 para AM
             currentStation += 10.0;
@@ -75,6 +92,10 @@ public class Radio implements IRadio {
 
     @Override
     public void saveStation(int buttonId, double station) {
+        if (!isON()) {
+            System.out.println("Encienda primero la radio");
+            return;
+        }
         if (buttonId >= 1 && buttonId <= 12) {
             savedStations[buttonId - 1] = station;
             System.out.println("Emisora guardada en el botón " + buttonId);
@@ -85,7 +106,20 @@ public class Radio implements IRadio {
 
     @Override
     public double selectStation(int buttonId) {
+        if (!isON()) {
+            System.out.println("Encienda primero la radio");
+            return currentStation;
+        }
         if (buttonId >= 1 && buttonId <= 12) {
+            if (savedStations[buttonId -1] != 0.0) {
+                currentStation = savedStations[buttonId - 1];
+            } 
+            if (currentStation >= 530.0 && !isAM()) {
+                switchAMFM();
+            }
+            if (currentStation <= 108.0 && isAM()) {
+                switchAMFM();
+            }
             currentStation = savedStations[buttonId - 1];
             System.out.println("Emisora seleccionada desde el botón " + buttonId);
             return currentStation;
