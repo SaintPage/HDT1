@@ -36,26 +36,62 @@ public class Radio implements IRadio {
     }
 
     @Override
-    public void saveStation(int buttonId, double station) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'saveStation'");
-    }
-
-    @Override
-    public double selectStation(int buttonId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'selectStation'");
-    }
-
-    @Override
     public void switchAMFM() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'switchAMFM'");
+        if (isAM) {
+            // Limitar la frecuencia AM antes de cambiar a FM
+            currentStation = Math.max(currentStation, 530.0);
+            currentStation = Math.min(currentStation, 1610.0);
+            isAM = false;
+            System.out.println("Cambiando a FM.");
+        } else {
+            // Limitar la frecuencia FM antes de cambiar a AM
+            currentStation = Math.max(currentStation, 87.9);
+            currentStation = Math.min(currentStation, 107.9);
+            isAM = true;
+            System.out.println("Cambiando a AM.");
+        }
     }
 
     @Override
     public double nextStation() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'nextStation'");
+        if (isAM) {
+            // Incrementar en 10 para AM
+            currentStation += 10.0;
+            if (currentStation > 1610.0) {
+                // Valor inicial de AM
+                currentStation = 530.0;
+            }
+        } else {
+            // Incrementar en 0.2 para FM
+            currentStation += 0.2;
+            if (currentStation > 107.9) {
+                // Valor inicial de FM
+                currentStation = 87.9;
+            }
+        }
+        System.out.println("Cambiando a la siguiente emisora: " + currentStation);
+        return currentStation;
+    }
+
+    @Override
+    public void saveStation(int buttonId, double station) {
+        if (buttonId >= 1 && buttonId <= 12) {
+            savedStations[buttonId - 1] = station;
+            System.out.println("Emisora guardada en el botón " + buttonId);
+        } else {
+            System.out.println("Número de botón no válido.");
+        }
+    }
+
+    @Override
+    public double selectStation(int buttonId) {
+        if (buttonId >= 1 && buttonId <= 12) {
+            currentStation = savedStations[buttonId - 1];
+            System.out.println("Emisora seleccionada desde el botón " + buttonId);
+            return currentStation;
+        } else {
+            System.out.println("Número de botón no válido.");
+            return currentStation;
+        }
     }
 }
