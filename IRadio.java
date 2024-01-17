@@ -1,5 +1,7 @@
 /**
  * Interfaz de métodos para una radio
+ * NOTA IMPORTANTE: escribimos los métodos tal y como estaban escritos en el pizarrón, en cuanto a mayusculas y minusculas orden. 
+ * El programa solo funciona si en la clase que implementa los métodos estan bien escritos como en el pizarrón.
  * @author Colaborativo en Algoritmos y Estructuras de datos
  */
 public interface IRadio {
